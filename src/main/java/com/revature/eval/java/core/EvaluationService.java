@@ -1,6 +1,8 @@
 package com.revature.eval.java.core;
 
 import java.time.temporal.Temporal;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,8 +32,14 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String acronym(String phrase) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String acronym = "";
+		
+		String[] phraseSplit = phrase.split(" |-");
+		
+		for(int i = 0; i <= phraseSplit.length - 1; i++) {
+			acronym = acronym.concat(phraseSplit[i].substring(0,1).toUpperCase());
+		}
+		return acronym;
 	}
 
 	/**
@@ -84,17 +92,30 @@ public class EvaluationService {
 		}
 
 		public boolean isEquilateral() {
-			// TODO Write an implementation for this method declaration
-			return false;
+			if(sideOne == sideTwo && sideOne == sideThree && sideTwo == sideThree) {
+				return true;
+			}else {
+				return false;
+			}
 		}
 
 		public boolean isIsosceles() {
 			// TODO Write an implementation for this method declaration
+			if(
+					(sideOne == sideTwo && sideOne != sideThree) ||
+					(sideOne == sideThree && sideOne != sideTwo) ||
+					(sideTwo == sideThree && sideTwo != sideOne)) {
+				return true;
+				
+			}
 			return false;
 		}
 
 		public boolean isScalene() {
 			// TODO Write an implementation for this method declaration
+			if(sideOne != sideTwo && sideOne != sideThree && sideTwo != sideThree) {
+				return true;
+			}
 			return false;
 		}
 
@@ -116,8 +137,60 @@ public class EvaluationService {
 	 * @return
 	 */
 	public int getScrabbleScore(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+String word = string.toLowerCase();
+		
+		int points = 0;
+		
+		char[] chars = word.toCharArray();
+		
+		for(int i = 0; i <= chars.length - 1; i++) {
+			switch (chars[i]) {
+			
+			case 'e': 
+			case 'a': 
+			case 'o': 
+			case 't':
+			case 'i':
+			case 'n':
+			case 'r': 
+			case 's':
+			case 'l':
+			case 'u': 
+				points += 1;
+				break;
+			case 'd':
+			case 'g':
+				points += 2;
+				break;
+			case 'c':
+			case 'm':
+			case 'b':
+			case 'p':
+				points += 3;
+				break;
+			case 'h':
+			case 'f':
+			case 'w':
+			case 'y':
+			case 'v':
+				points += 4;
+				break;
+			case 'k':
+				points += 5;
+				break;
+			case 'j':
+			case 'x':
+				points += 8;
+				break;
+			case 'q':
+			case 'z':
+				points += 10;
+				break;
+			}
+			
+		}
+		System.out.println(points);
+		return points;
 	}
 
 	/**
@@ -151,10 +224,45 @@ public class EvaluationService {
 	 * Note: As this exercise only deals with telephone numbers used in
 	 * NANP-countries, only 1 is considered a valid country code.
 	 */
-	public String cleanPhoneNumber(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+	public String cleanPhoneNumber(String string) throws IllegalArgumentException{
+	
+		String result = string.replaceAll("[^\\w\\s]","");
+		System.out.println("this is user input: ");
+		result = result.replaceAll("\\s+","");
+		System.out.println(result);
+		result = result.replaceAll("[^\\d.]", "");
+		
+		int size = result.length();
+		int excess = size - 10;
+		
+		//System.out.println(result);
+		if(size == 11) {
+			if(result.substring(0,1).equals("1")) {
+				if(!result.substring(1,2).equals("0") && !result.substring(1,2).equals("1")) {
+					if(!result.substring(4,5).equals("0") && !result.substring(4,5).equals("1")) {
+						result = result.substring(excess);
+						return result;
+					}else{
+						System.out.println("The second set of three digits cannot start with a 0 or 1!");
+					}
+				}else {
+					System.out.print("The area code cannot start with a 0 or 1!");
+				}
+			}else{
+				System.out.println("The national code must be +1!");
+			}
+		}else if(size == 10){
+			System.out.println(result);	
+			return result;
+		}else if(size > 11) {
+			throw new IllegalArgumentException("Number invalid.");
+		}else{
+			throw new IllegalArgumentException("Number invalid.");
+		}
+		return result;
 	}
+		
+	
 
 	/**
 	 * 6. Given a phrase, count the occurrences of each word in that phrase.
@@ -166,8 +274,26 @@ public class EvaluationService {
 	 * @return
 	 */
 	public Map<String, Integer> wordCount(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		String cleanString = string.replaceAll("\n", "");
+		String[] stringSplit = cleanString.split(" |,");
+		Map<String, Integer> wordMap = new HashMap<String, Integer>();
+		
+		for(int i = 0; i < stringSplit.length; i++) {
+			
+			//System.out.println(wordMap);
+			
+			if(!wordMap.containsKey(stringSplit[i])) {
+				wordMap.put(stringSplit[i], 1);
+				System.out.println("Testing");
+			}else{
+				wordMap.put(stringSplit[i], wordMap.get(stringSplit[i]) + 1);
+			}
+			
+			
+		}
+		//System.out.println(wordMap);
+		//System.out.println(stringSplit[1]);
+		return wordMap;
 	}
 
 	/**
@@ -246,8 +372,65 @@ public class EvaluationService {
 	 * @return
 	 */
 	public String toPigLatin(String string) {
-		// TODO Write an implementation for this method declaration
-		return null;
+		// split string into any array separated by spaces
+		String[] splitString = string.split(" ");
+		//create empty string for new translated word or phrase
+		String translated = "";
+		
+		//loops through and address each index of splitString array
+		for(int i = 0; i < splitString.length; i++) {
+			
+			// set first letter of current array index value to variable
+			String firstLetter = splitString[i].substring(0,1);
+			//set first two letters of current array index value to variable
+			String firstTwo = splitString[i].substring(0,2);
+			// set first three letters of current array index value to variable
+			String firstThree = splitString[i].substring(0,3);
+
+			
+			//if the first two letter are not equal to "th", "qu", and "sch"
+			//then run switch statement
+			if(!firstTwo.equals("th") && !firstTwo.equals("qu") && !firstThree.equals("sch")) {
+				//System.out.println("Test");
+				//depending on the first letter of current index value
+				//if vowel, just add "ay" to end
+				switch (firstLetter) {
+				case "a":
+				case "e":
+				case "i":
+				case "o":
+				case "u":
+					splitString[i] = splitString[i] + "ay";
+					translated = splitString[i];
+					return translated;
+					//break;
+				//if not a vowel, place first letter on end and add "ay"
+				default:
+					splitString[i] = splitString[i].substring(1, splitString[i].length()) + firstLetter + "ay";
+					translated = splitString[i];
+					//break;
+				}
+			//else if the first two letters are equal to "th" OR "qu"
+			//add the two letters to the end of word and add "ay"
+			}else if(firstTwo.equals("th") || firstTwo.equals("qu")){
+				splitString[i] = splitString[i].substring(2, splitString[i].length()) + firstTwo + "ay";
+				translated = splitString[i];
+			//else if the first three letters are equal to "sch"
+			//add the three letters to the end of word and add "ay"
+			}else if(firstThree.equals("sch")){
+				splitString[i] = splitString[i].substring(3, splitString[i].length()) + firstThree + "ay";
+				translated = splitString[i];
+			}
+		}
+		//if array has more than one word in it
+		//join the array as a string separated by a space
+		//else just return the single word
+		if(splitString.length > 1) {
+			translated = String.join(" ", splitString);
+			return translated;
+		}else {
+			return translated;
+		}
 	}
 
 	/**
@@ -266,8 +449,28 @@ public class EvaluationService {
 	 * @return
 	 */
 	public boolean isArmstrongNumber(int input) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		
+		//convert input into string and assign to variable
+		String stringNumber = Integer.toString(input);
+		//split string (by digits) into string array, assign to variable
+		String[] strNumArr = stringNumber.split("");
+		//length of string array (# of digits)
+		int length = strNumArr.length;
+		//calculated value to compare original input to
+		int calculate = 0;
+		
+		for(int i = 0; i < length; i++) {
+			double baseNum = Double.parseDouble(strNumArr[i]);
+			double powerNum = Double.valueOf(length);
+			strNumArr[i] = String.valueOf(Math.pow(baseNum, powerNum));
+			
+			calculate = calculate + Integer.parseInt(strNumArr[i].replace(".0", ""));
+		}
+		if(input != calculate) {
+			return false;
+		}else {
+			return true;
+		}
 	}
 
 	/**
@@ -282,7 +485,40 @@ public class EvaluationService {
 	 */
 	public List<Long> calculatePrimeFactorsOf(long l) {
 		// TODO Write an implementation for this method declaration
-		return null;
+		List<Long> primeFactors = new ArrayList<Long>();
+		//count how many times number is divided by 2
+		int count = 0;
+		
+		//as long as l divided by 2 leaves nothing for remainder, keep halving it
+		//and add it to array
+		while(l % 2 == 0) {
+			l = l / 2;
+			count += 1;
+		}
+		
+		if(count != 0) {
+			for(long i = 0; i < count; i++) {
+				primeFactors.add(2L);
+			}
+		}
+		
+        for (long i = 3; i <= Math.sqrt(l); i+= 2) 
+        { 
+            // as long as l divided my i leaves no remainder, divide l by i 
+        	// and add to list
+            while (l % i == 0) 
+            { 
+                primeFactors.add(i);
+                l = l / i; 
+            } 
+        } 
+  
+        // if prime is greater than 2
+        // add it to list
+        if (l > 2) 
+			primeFactors.add(l); 
+
+		return primeFactors;
 	}
 
 	/**
@@ -320,10 +556,41 @@ public class EvaluationService {
 		}
 
 		public String rotate(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			
+			// assign input to string variable
+			String myString = string;
+			//assign input to StringBuilder object
+			StringBuilder rotateString = new StringBuilder(myString);
+			//create variable to store new string created from StringBuilder object
+			String myNewPhrase = "";
+			
+			// loop through characters of element to address each character of element
+			for(int i = 0; i < rotateString.length(); i++) {
+						
+				//if the character is a letter at the index of the string
+				//continue to process code
+				if(Character.isLetter(rotateString.charAt(i))) {
+					//if the character is uppercase, set it acording to ASCII code
+					if(Character.isUpperCase(rotateString.charAt(i))) {
+						
+						char myChar = (char) (((int)rotateString.charAt(i) + key - 65) % 26 + 65);
+						System.out.println("myChar = " + myChar); //test
+						rotateString.setCharAt(i, myChar);
+						System.out.println("if uppercase: " + rotateString); //test
+						
+						//if the character is lowercase, set it acording to ASCII code
+					}else if(Character.isLowerCase(rotateString.charAt(i))){
+						char myChar = (char) (((int)rotateString.charAt(i) + key - 97) % 26 + 97);
+						rotateString.setCharAt(i, myChar);
+					}
+					
+				}else {
+					continue;
+				}
+			}
+			myNewPhrase = rotateString.toString();
+			return myNewPhrase;
 		}
-
 	}
 
 	/**
@@ -338,10 +605,37 @@ public class EvaluationService {
 	 * @param i
 	 * @return
 	 */
-	public int calculateNthPrime(int i) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+	public int calculateNthPrime(int i) throws IllegalArgumentException {
+		
+		if(i < 1) {
+			throw new IllegalArgumentException("Ooo... Yeah... You done messed up.");
+		}
+		//set input to theNth variable
+		int theNth = i;
+		//the number that's being compared
+		int candidate;
+		//counts how many prime numbers
+		int count;
+	    for(candidate = 2, count = 0; count < theNth; ++candidate) {
+	        if (isPrime(candidate)) {
+	            ++count;
+	        }
+	    }
+	    // the candidate will increment when count reaches theNth
+	    return candidate-1;
+		    
 	}
+	
+	public boolean isPrime(int primeNum) {
+        for(int i = 2; i < primeNum; ++i) {
+            if (primeNum % i == 0) {
+                // if the number is divisible by anything other than itself, return false
+                // it's not a prime number
+                return false;
+            }
+        }
+        return true;
+    }
 
 	/**
 	 * 13 & 14. Create an implementation of the atbash cipher, an ancient encryption
@@ -376,8 +670,37 @@ public class EvaluationService {
 		 * @return
 		 */
 		public static String encode(String string) {
-			// TODO Write an implementation for this method declaration
-			return null;
+			
+			Map<Character, Character> alphaMap = new HashMap<Character, Character>();
+			alphaMap.put('a', 'z'); alphaMap.put('b', 'y'); alphaMap.put('c', 'x');
+			alphaMap.put('d', 'w'); alphaMap.put('e', 'v'); alphaMap.put('f', 'u');
+			alphaMap.put('g', 't'); alphaMap.put('h', 's'); alphaMap.put('i', 'r');
+			alphaMap.put('j', 'q'); alphaMap.put('k', 'p'); alphaMap.put('l', 'o');
+			alphaMap.put('m', 'n'); alphaMap.put('n', 'm'); alphaMap.put('o', 'l');
+			alphaMap.put('p', 'k'); alphaMap.put('q', 'j'); alphaMap.put('r', 'i');
+			alphaMap.put('s', 'h'); alphaMap.put('t', 'g'); alphaMap.put('u', 'f');
+			alphaMap.put('v', 'e'); alphaMap.put('w', 'd'); alphaMap.put('x', 'c');
+			alphaMap.put('y', 'b'); alphaMap.put('z', 'a');
+			
+			String myString = string;
+			myString = myString.toLowerCase();
+			myString = myString.replace(",", "");
+			myString = myString.replace(".", "");
+			myString = myString.replace(" ", "");
+			StringBuilder encodeString = new StringBuilder(myString);
+			//System.out.println(decodeString); //test
+			int charGroupNum = 5;
+			
+			for(int i = 0; i < encodeString.length(); i++) {
+				if(Character.isLetter(encodeString.charAt(i))) {
+					encodeString.setCharAt(i, alphaMap.get(encodeString.charAt(i)));
+				}
+			}
+			//System.out.println(decodeString);
+			String result = encodeString.toString();
+			result = result.replaceAll("(.{" + charGroupNum + "})", "$0 ").trim();
+			System.out.println(result);
+			return result;
 		}
 
 		/**
@@ -388,7 +711,30 @@ public class EvaluationService {
 		 */
 		public static String decode(String string) {
 			// TODO Write an implementation for this method declaration
-			return null;
+			Map<Character, Character> alphaMap = new HashMap<Character, Character>();
+			alphaMap.put('a', 'z'); alphaMap.put('b', 'y'); alphaMap.put('c', 'x');
+			alphaMap.put('d', 'w'); alphaMap.put('e', 'v'); alphaMap.put('f', 'u');
+			alphaMap.put('g', 't'); alphaMap.put('h', 's'); alphaMap.put('i', 'r');
+			alphaMap.put('j', 'q'); alphaMap.put('k', 'p'); alphaMap.put('l', 'o');
+			alphaMap.put('m', 'n'); alphaMap.put('n', 'm'); alphaMap.put('o', 'l');
+			alphaMap.put('p', 'k'); alphaMap.put('q', 'j'); alphaMap.put('r', 'i');
+			alphaMap.put('s', 'h'); alphaMap.put('t', 'g'); alphaMap.put('u', 'f');
+			alphaMap.put('v', 'e'); alphaMap.put('w', 'd'); alphaMap.put('x', 'c');
+			alphaMap.put('y', 'b'); alphaMap.put('z', 'a');
+			
+			String myString = string;
+			myString = myString.toLowerCase();
+			myString = myString.replace(" ", "");
+			StringBuilder decodeString = new StringBuilder(myString);
+
+			for(int i = 0; i < decodeString.length(); i++) {
+				if(Character.isLetter(decodeString.charAt(i))) {
+					decodeString.setCharAt(i, alphaMap.get(decodeString.charAt(i)));
+				}
+			}
+			String result = decodeString.toString();
+			
+			return result;
 		}
 	}
 
