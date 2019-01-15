@@ -1,10 +1,17 @@
 package com.revature.eval.java.core;
 
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.temporal.ChronoField;
 import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
 public class EvaluationService {
 
@@ -335,7 +342,6 @@ String word = string.toLowerCase();
 		private List<T> sortedList;
 
 		public int indexOf(T t) {
-			// TODO Write an implementation for this method declaration
 			return 0;
 		}
 
@@ -608,7 +614,7 @@ String word = string.toLowerCase();
 	public int calculateNthPrime(int i) throws IllegalArgumentException {
 		
 		if(i < 1) {
-			throw new IllegalArgumentException("Ooo... Yeah... You done messed up.");
+			throw new IllegalArgumentException("Ooo... Yeah... You messed up. We can't accept anything lower than 2.");
 		}
 		//set input to theNth variable
 		int theNth = i;
@@ -761,8 +767,42 @@ String word = string.toLowerCase();
 	 * @return
 	 */
 	public boolean isValidIsbn(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		
+		//assign input to variable for manipulation
+		String myString = string;
+		//replace all dashes in the ISBN number
+		myString = myString.replace("-","");
+		//store whether ISBN is valid
+		boolean isValidIsbn = false;
+		//set the sum to 0 to start
+		int sum = 0;
+		//loop through string characters to address each
+		//multiply each character by 10 decrementing to 1 with each iteration
+		for(int i=0, j=10; i < myString.length(); i++, j--) {
+			//if character is not a digit and if last character is not an X
+			//the ISBN is invalid
+			if(!Character.isDigit(myString.charAt(i)) && myString.charAt(myString.length()-1) != 'X') {
+				isValidIsbn = false;
+				break;
+			//if character is a digit OR if any character (which would be X) is equal to X, run ode
+			}else if(Character.isDigit(myString.charAt(i)) || myString.charAt(i) == 'X'){
+					//if character is digit, convert character to int and add it to sum after 
+					//multiplying by decrementing value
+					if(Character.isDigit(myString.charAt(i))) {
+						int storeAsInt = Character.getNumericValue(myString.charAt(i));
+						sum = sum + (storeAsInt * j);
+					//else if the character is equal to X, add 10 to the sum
+					}else if(myString.charAt(i) == 'X') {
+						int myX = 10;
+						sum = sum + myX;
+					}	
+			}
+		}
+		
+		if(sum % 11 == 0) {
+			isValidIsbn = true;
+		}
+		return isValidIsbn;
 	}
 
 	/**
@@ -779,8 +819,32 @@ String word = string.toLowerCase();
 	 * @return
 	 */
 	public boolean isPangram(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+		// store input into string variable
+		String myString = string;
+		myString = myString.toLowerCase();
+		boolean isValidPangram = false;
+		//create a new map to store unique alphabet value
+		Map<Character, Integer> alphabetCheck = new HashMap<Character, Integer>();
+		alphabetCheck.put('a', 0); alphabetCheck.put('b', 1); alphabetCheck.put('c', 2); alphabetCheck.put('d', 3);
+		alphabetCheck.put('e', 4); alphabetCheck.put('f', 5); alphabetCheck.put('g', 6); alphabetCheck.put('h', 7);
+		alphabetCheck.put('i', 8); alphabetCheck.put('j', 9); alphabetCheck.put('k', 10); alphabetCheck.put('l', 11);
+		alphabetCheck.put('m', 12); alphabetCheck.put('n', 13); alphabetCheck.put('o', 14); alphabetCheck.put('p', 15);
+		alphabetCheck.put('q', 16); alphabetCheck.put('r', 17); alphabetCheck.put('s', 18); alphabetCheck.put('t', 19);
+		alphabetCheck.put('u', 20); alphabetCheck.put('v', 21); alphabetCheck.put('w', 22); alphabetCheck.put('x', 23);
+		alphabetCheck.put('y', 24); alphabetCheck.put('z', 25); 
+		
+		
+		for(int i = 0; i < myString.length(); i++) {
+			//if character at index is in the map, remove that index from map
+			if(alphabetCheck.containsKey(myString.charAt(i))) {
+				alphabetCheck.remove(myString.charAt(i));
+			}
+		}
+		//if there are no elements in index, return valid pangram
+		if(alphabetCheck.isEmpty()) {
+			isValidPangram = true;
+		}
+		return isValidPangram;
 	}
 
 	/**
@@ -791,9 +855,24 @@ String word = string.toLowerCase();
 	 * @param given
 	 * @return
 	 */
-	public Temporal getGigasecondDate(Temporal given) {
-		// TODO Write an implementation for this method declaration
-		return null;
+	public Temporal getGigasecondDate(Temporal given){
+		LocalDateTime date = LocalDateTime.of(1,Month.JANUARY,1,0,0,0);
+		
+		date = date.withYear(given.get(ChronoField.YEAR));
+		date = date.withMonth(given.get(ChronoField.MONTH_OF_YEAR));
+		date = date.withDayOfMonth(given.get(ChronoField.DAY_OF_MONTH));
+		
+		try {
+			
+			date = date.withHour(given.get(ChronoField.HOUR_OF_DAY));
+			date = date.withMinute(given.get(ChronoField.MINUTE_OF_HOUR));
+			date = date.withSecond(given.get(ChronoField.SECOND_OF_MINUTE));
+			
+		}catch (Exception e){
+			
+		}
+		
+		return date.plusSeconds(1_000_000_000);
 	}
 
 	/**
@@ -810,8 +889,31 @@ String word = string.toLowerCase();
 	 * @return
 	 */
 	public int getSumOfMultiples(int i, int[] set) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+
+		int maxNum = i;
+		int[] findMultipleOf = set.clone();
+		List<Integer> storeMultiples = new ArrayList<Integer>();
+		
+		int sum = 0;
+		
+		for(int j = 0; j < findMultipleOf.length; j++) {
+				
+			for(int y = findMultipleOf[j]; y < maxNum; y++) {
+					
+				if(y % findMultipleOf[j] == 0) {
+					if(!storeMultiples.contains(y)) {
+						storeMultiples.add(y);
+					}
+				}			
+			}
+		}
+
+		for(Integer x : storeMultiples) {
+			sum += x;
+		}
+		
+		
+		return sum;
 	}
 
 	/**
@@ -851,8 +953,58 @@ String word = string.toLowerCase();
 	 * @return
 	 */
 	public boolean isLuhnValid(String string) {
-		// TODO Write an implementation for this method declaration
-		return false;
+
+		//store input as string
+		String myString = string;
+		//replace all spaces with no space
+		myString = myString.replace(" ", "");
+		//create new stringbuild object to manipulate string
+		StringBuilder myStringBuild = new StringBuilder(myString);
+		int sum = 0;
+		boolean isLuhn = false;
+		
+		//if the string length is greater than 1, run code
+		//else return false
+		if(myString.length() > 1) {
+			
+			//if string has any letters, it's invalid, return false
+			//else, run code
+			if(myString.matches("[a-zA-Z]")) {
+				isLuhn = false;
+			}else {
+				//loop through from the end of the string and skip every other character
+				for(int i = myString.length() -2; i > 0; i -= 2) {
+					
+					//store character as int so it can be calculated and multiply it by 2
+					int storeAsNum = Character.getNumericValue(myStringBuild.charAt(i));
+					storeAsNum = storeAsNum * 2;
+					if(storeAsNum > 9) {
+						storeAsNum -= 9;
+					}
+					//convert int to a string and then to char to input back into string 
+					String storeAsString = Integer.toString(storeAsNum);
+					char storeAsChar = storeAsString.charAt(0);
+					myStringBuild.setCharAt(i, storeAsChar);
+				}
+					
+				for(int j = 0; j < myString.length(); j++) {
+					sum = sum + Character.getNumericValue(myStringBuild.charAt(j));
+					if(!Character.isDigit(myStringBuild.charAt(j))) {
+						isLuhn = false;
+						break;
+					}else if(j == myString.length() - 1) {
+						if(sum % 10 == 0) {
+							isLuhn = true;
+							return isLuhn;
+						}else {
+							isLuhn = false;
+							return isLuhn;
+						}
+					}
+				}
+			}		
+		}
+		return isLuhn;
 	}
 
 	/**
@@ -881,10 +1033,43 @@ String word = string.toLowerCase();
 	 * 
 	 * @param string
 	 * @return
+	 * @throws ScriptException 
 	 */
-	public int solveWordProblem(String string) {
-		// TODO Write an implementation for this method declaration
-		return 0;
+	public int solveWordProblem(String string) throws ScriptException {
+		
+		//create script engine manager object to calculate string
+		ScriptEngineManager mngr = new ScriptEngineManager();
+	    ScriptEngine engine = mngr.getEngineByName("JavaScript");
+	    //declare expression and calculation variables
+	    String expression = "";
+	    int calculation = 0;
+	    
+	    String myString = string;
+	    myString = myString.replace("?", "");
+	    String[] myStringArr = myString.split(" ");
+	    
+	    for(int i=0; i<myStringArr.length; i++) {
+	    	
+	    	if(myStringArr[i].equals("plus")) {
+	    		myStringArr[i] = "+";
+	    		expression = expression + myStringArr[i];
+	    	}else if(myStringArr[i].equals("minus")) {
+	    		myStringArr[i] = "-";
+	    		expression = expression + myStringArr[i];
+	    	}else if(myStringArr[i].equals("multiplied")) {
+	    		myStringArr[i] = "*";
+	    		expression = expression + myStringArr[i];
+	    	}else if(myStringArr[i].equals("divided")) {
+	    		myStringArr[i] = "/";
+	    		expression = expression + myStringArr[i];
+	    	}else if(myStringArr[i].matches("[0-9]+") || myStringArr[i].contains("-")) {
+	    		expression = expression + myStringArr[i];
+	    	}
+	    	
+	    }
+	    
+	    calculation = (int) engine.eval(expression);
+		return calculation;
 	}
 
 }
